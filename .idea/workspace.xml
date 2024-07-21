@@ -4,49 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a5d9f2f2-5cc7-4f0d-9a29-7898efb6aae8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/member/controller/MemberController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/member/dto/EditInformation.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/member/dto/Information.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/member/dto/LoginDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/member/dto/ProfileInformation.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/member/dto/SignUpDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/member/entity/Company.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/member/entity/Member.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/member/repository/AuthorityJpaRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/member/repository/MemberJpaRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/member/service/LoginService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/member/service/MemberService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/profile/controller/ProfileController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/profile/entity/Profile.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/profile/entity/ProfileTechnic.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/profile/entity/Technic.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/profile/repository/ProfileJpaRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/profile/repository/ProfileTechnicJpaRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/profile/repository/TechnicJpaRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/profile/service/ProfileService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/profile/valid/ProfileControllerAdvice.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/profile/valid/exception/CheckMemberIdNotNullException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/profile/valid/exception/IntroduceOutOfBoundException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/profile/valid/exception/MemberNotFoundException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/profile/valid/exception/NotAuthorizedEditException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/domain/profile/valid/exception/ProfileNotFoundException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/global/config/CorsConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/global/config/JpaConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/global/config/JwtSecurityConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/global/config/SecurityConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/global/jwt/dto/TokenDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/global/jwt/entity/Authority.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/global/jwt/entity/TokenProvider.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/global/jwt/exception/JwtAccessDeniedHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/global/jwt/exception/JwtAuthenticationEntryPoint.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/global/jwt/filter/JwtFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/global/jwt/service/TokenService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/global/login/config/CustomSecurityConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/global/login/controller/MemberController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/global/login/security/CustomUserDetailsService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/living-alone-springboot/src/main/java/com/livingalone/springboot/global/util/CurrentUserValue.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/living-alone-springboot/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/living-alone-springboot/build.gradle" afterDir="false" />
+    <list default="true" id="a5d9f2f2-5cc7-4f0d-9a29-7898efb6aae8" name="Changes" comment="Issue Template 작성">
+      <change beforePath="$PROJECT_DIR$/.github/ISSUE_TEMPLATE/feature_request.md" beforeDir="false" afterPath="$PROJECT_DIR$/.github/ISSUE_TEMPLATE/feature_request.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +25,12 @@
       <state>
         <projects_view>
           <tree_state>
-            <expand />
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="living-alone-springboot" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
             <select />
           </tree_state>
         </projects_view>
@@ -89,7 +56,12 @@
     "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/alstj/Desktop/Living-alone-SpringBoot/living-alone-springboot",
+    "last_opened_file_path": "C:/Users/alstj/Desktop/Living-alone-SpringBoot",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "spring.configuration.checksum": "7230170e71a6586137092a4fd26db0d1",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -111,6 +83,7 @@
       <option name="presentableId" value="Default" />
       <updated>1721574517717</updated>
       <workItem from="1721574518775" duration="57000" />
+      <workItem from="1721575165632" duration="395000" />
     </task>
     <servers />
   </component>
