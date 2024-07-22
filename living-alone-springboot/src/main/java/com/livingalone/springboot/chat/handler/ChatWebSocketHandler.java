@@ -25,16 +25,17 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     /*
      * 상대 유저와의 chatRoom 을 조회해보고, 채팅방이 있는 경우 이전 메세지들을 로드.
+     * 요청 url 예시 : ws://~~/chat?userId=${userId}&authorId=${authorId}&viewerId=${viewerId}
      *
      */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        sessions.add(session);
 
 
     }
 
     /*
-     *
      * 1. 상대 유저 B가 이미 연결되어 있는 경우 ( == B의 session이 set에 들어있는 경우 ) -> 바로 메세지 보내고, message 테이블에 insert
      * 2. 연결되어 있지 않은 경우 -> message 테이블에만 insert
      *
@@ -51,7 +52,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      */
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-
+        sessions.remove(session);
 
     }
 
