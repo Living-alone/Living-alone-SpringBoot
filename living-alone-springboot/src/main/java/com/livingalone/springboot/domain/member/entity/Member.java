@@ -1,6 +1,5 @@
 package com.livingalone.springboot.domain.member.entity;
 
-import com.livingalone.springboot.domain.profile.entity.Profile;
 import com.livingalone.springboot.global.jwt.entity.Authority;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,6 +20,8 @@ public class Member {
     private String memberId;
     @Column(length=50, nullable = false)
     private String name;
+    @Column(nullable = false)
+    private String password;
     @Column(nullable = false, columnDefinition ="TINYINT(1)")
     private int age;
     @Column(nullable = false, length = 15 ,unique = true )
@@ -33,20 +34,13 @@ public class Member {
     private String nickname;
     @Enumerated(EnumType.STRING)
     private Gender gender;
-    @Column(nullable = false)
-    private String password;
     @Enumerated(EnumType.STRING)
     @Column(name="user_status")
     private Status status;
     private String email;
-
-
     @ManyToOne(cascade = CascadeType.ALL)
     private Authority authority;
     private Boolean activate;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Profile profile;
-
     public boolean isActivated() {
         return activate;
     }

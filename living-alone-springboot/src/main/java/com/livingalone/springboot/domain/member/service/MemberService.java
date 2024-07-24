@@ -1,16 +1,9 @@
 package com.livingalone.springboot.domain.member.service;
 
-//import capstone.capstone.domain.member.dto.SignUpDto;
-//import capstone.capstone.domain.member.entity.Member;
-//import capstone.capstone.domain.member.repository.AuthorityJpaRepository;
-//import capstone.capstone.domain.member.repository.MemberJpaRepository;
-//import capstone.capstone.domain.profile.entity.Profile;
-//import capstone.capstone.global.jwt.entity.Authority;
 import com.livingalone.springboot.domain.member.dto.SignUpDto;
 import com.livingalone.springboot.domain.member.entity.Member;
 import com.livingalone.springboot.domain.member.repository.AuthorityJpaRepository;
 import com.livingalone.springboot.domain.member.repository.MemberJpaRepository;
-import com.livingalone.springboot.domain.profile.entity.Profile;
 import com.livingalone.springboot.global.jwt.entity.Authority;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,15 +39,19 @@ public class MemberService {
                         .authority("ROLE_USER")
                         .build());
 
-        Profile profile = new Profile();
 
         Member member = Member.builder()
                 .memberId(memberDto.getMemberId())
                 .name(memberDto.getName())
-                .authority(authority)
-                .profile(profile)
-                .activate(true)
                 .password(passwordEncoder.encode(memberDto.getPassword()))
+                .age(memberDto.getAge())
+                .phone_number(memberDto.getPhoneNumber())
+                .school(memberDto.getSchool())
+                .student_id(memberDto.getStudentId())
+                .nickname(memberDto.getNickname())
+                .gender(memberDto.getGender()).authority(authority)
+                .status(memberDto.getStatus())
+                .activate(true)
                 .build();
 
 
