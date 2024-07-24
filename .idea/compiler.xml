@@ -10,5 +10,8 @@
         <module name="living-alone-springboot.main" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="living-alone-springboot" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>

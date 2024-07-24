@@ -1,16 +1,9 @@
 package com.livingalone.springboot.domain.member.service;
 
-//import capstone.capstone.domain.member.dto.SignUpDto;
-//import capstone.capstone.domain.member.entity.Member;
-//import capstone.capstone.domain.member.repository.AuthorityJpaRepository;
-//import capstone.capstone.domain.member.repository.MemberJpaRepository;
-//import capstone.capstone.domain.profile.entity.Profile;
-//import capstone.capstone.global.jwt.entity.Authority;
 import com.livingalone.springboot.domain.member.dto.SignUpDto;
 import com.livingalone.springboot.domain.member.entity.Member;
 import com.livingalone.springboot.domain.member.repository.AuthorityJpaRepository;
 import com.livingalone.springboot.domain.member.repository.MemberJpaRepository;
-import com.livingalone.springboot.domain.profile.entity.Profile;
 import com.livingalone.springboot.global.jwt.entity.Authority;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,40 +39,29 @@ public class MemberService {
                         .authority("ROLE_USER")
                         .build());
 
-        Profile profile = new Profile();
 
         Member member = Member.builder()
                 .memberId(memberDto.getMemberId())
-                .email(memberDto.getEmail())
                 .name(memberDto.getName())
-                .authority(authority)
-                .profile(profile)
-                .activate(true)
                 .password(passwordEncoder.encode(memberDto.getPassword()))
+                .age(memberDto.getAge())
+                .phone_number(memberDto.getPhoneNumber())
+                .school(memberDto.getSchool())
+                .student_id(memberDto.getStudentId())
+                .nickname(memberDto.getNickname())
+                .gender(memberDto.getGender()).authority(authority)
+                .status(memberDto.getStatus())
+                .activate(true)
                 .build();
 
-        log.info(member.getEmail());
+
         Member save = memberJpaRepository.save(member);
         log.info("멤버 저장 됨 {}", save.getId());
-        log.info(save.getPassword());
+        //log.info(save.getPassword());
         return ResponseEntity.ok(true);
     }
 
     public Optional<Member> findByMemberId(String memberId) {
         return memberJpaRepository.findByMemberId(memberId);
-    }
-
-    public Member findByEmail(String email) {
-        return memberJpaRepository.findByMemberId(email).orElse(null);
-    }
-
-    public boolean isValidEmail(String email) {
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
-
-    public boolean isValidPhone(String phone) {
-        Matcher matcher = phonePattern.matcher(phone);
-        return matcher.matches();
     }
 }

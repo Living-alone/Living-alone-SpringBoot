@@ -1,10 +1,5 @@
 package com.livingalone.springboot.global.jwt.service;
 
-
-//import capstone.capstone.domain.member.dto.LoginDto;
-//import capstone.capstone.global.jwt.dto.TokenDto;
-//import capstone.capstone.global.jwt.entity.TokenProvider;
-//import capstone.capstone.global.jwt.filter.JwtFilter;
 import com.livingalone.springboot.domain.member.dto.LoginDto;
 import com.livingalone.springboot.global.jwt.dto.TokenDto;
 import com.livingalone.springboot.global.jwt.entity.TokenProvider;
@@ -34,10 +29,8 @@ public class TokenService {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.getMemberId(), loginDto.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        log.info("authentication = {}", authentication.getName());
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        log.info(SecurityContextHolder.getContext().getAuthentication().getName());
         String jwt = tokenProvider.createToken(authentication);
 
         HttpHeaders httpHeaders = new HttpHeaders();
