@@ -50,7 +50,6 @@ public class MemberService {
 
         Member member = Member.builder()
                 .memberId(memberDto.getMemberId())
-                .email(memberDto.getEmail())
                 .name(memberDto.getName())
                 .authority(authority)
                 .profile(profile)
@@ -58,7 +57,7 @@ public class MemberService {
                 .password(passwordEncoder.encode(memberDto.getPassword()))
                 .build();
 
-        log.info(member.getEmail());
+
         Member save = memberJpaRepository.save(member);
         log.info("멤버 저장 됨 {}", save.getId());
         log.info(save.getPassword());
