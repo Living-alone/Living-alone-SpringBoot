@@ -51,8 +51,4 @@ public class LoginService implements UserDetailsService {
         return memberJpaRepository.findOneWithAuthorityByMemberId(memberId);
     }
 
-    /*@Transactional
-    public Optional<Member> getMyMemberWithAuthorities() {
-        return SecurityUtil.getCurrentUsername().flatMap(memberJpaRepository::findOneWithAuthorityByEmail);
-    }*/
 }

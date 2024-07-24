@@ -47,12 +47,12 @@ public class TokenProvider implements InitializingBean {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-        log.info("auth : {}", authorities);
+        //log.info("auth : {}", authorities);
         long now = (new Date()).getTime();
         Date validity = new Date(now + this.tokenValidityMilliseconds);//만료 시간 설정
         log.info("authentication name = {}", authentication.getName());
         return Jwts.builder()
-                .setIssuer("Coy")
+                .setIssuer("living_alone")
                 .setSubject("login")
                 .claim(AUTHORITIES_KEY, authorities)
                 .signWith(key, SignatureAlgorithm.HS512)
@@ -86,10 +86,10 @@ public class TokenProvider implements InitializingBean {
                 .parseClaimsJws(token)
                 .getBody();
 
-        log.info(claims.getIssuer());
-        log.info(claims.getSubject());
-        log.info(claims.getId());
-        log.info(claims.getAudience());
+//        log.info(claims.getIssuer());
+//        log.info(claims.getSubject());
+//        log.info(claims.getId());
+//        log.info(claims.getAudience());
         log.info(claims.get("username").toString());
 
         Collection<? extends GrantedAuthority> authorities = Arrays.stream(
