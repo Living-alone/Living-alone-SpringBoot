@@ -1,8 +1,6 @@
 package com.livingalone.springboot.domain.member.repository;
 
 
-//import capstone.capstone.domain.member.entity.Member;
-//import org.springframework.data.jpa.repository.JpaRepository;
 import com.livingalone.springboot.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

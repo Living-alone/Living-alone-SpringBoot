@@ -1,11 +1,6 @@
 package com.livingalone.springboot.domain.member.controller;
 
-//import capstone.capstone.domain.member.dto.LoginDto;
-//import capstone.capstone.domain.member.dto.SignUpDto;
-//import capstone.capstone.domain.member.entity.Member;
-//import capstone.capstone.domain.member.service.MemberService;
-//import capstone.capstone.global.jwt.dto.TokenDto;
-//import capstone.capstone.global.jwt.service.TokenService;
+
 import com.livingalone.springboot.domain.member.dto.LoginDto;
 import com.livingalone.springboot.domain.member.dto.SignUpDto;
 import com.livingalone.springboot.domain.member.entity.Member;

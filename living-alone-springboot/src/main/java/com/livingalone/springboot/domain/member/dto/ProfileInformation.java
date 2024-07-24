@@ -22,7 +22,6 @@ public class ProfileInformation {
     private Set<String> technics;
     private String link;
     private Integer likeCount;
-//    private List<Board> boards;
     private String imageUrl;
     private String openChatting;
 }
