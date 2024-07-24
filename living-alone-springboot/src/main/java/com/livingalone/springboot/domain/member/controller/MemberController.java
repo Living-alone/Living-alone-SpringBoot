@@ -48,6 +48,10 @@ public class MemberController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenDto> login(@Valid @RequestBody LoginDto loginDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Optional<Member> MemberName = memberService.findByMemberId(loginDto.getMemberId());
+        String memberName = MemberName.map(Member::getName).orElse("Name not found");
+        System.out.println("회원 이름: " + memberName);
         return tokenService.makeToken(loginDto);
     } // 회원 로그인
 
@@ -58,7 +62,6 @@ public class MemberController {
         log.info(memberId);
 
         Optional<Member> byMember = memberService.findByMemberId(memberId);
-
         if (byMember.isEmpty()) {
             return ResponseEntity.ok(true);
         } else {

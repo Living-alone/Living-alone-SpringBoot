@@ -57,26 +57,11 @@ public class MemberService {
 
         Member save = memberJpaRepository.save(member);
         log.info("멤버 저장 됨 {}", save.getId());
-
-        log.info(save.getPassword());
+        //log.info(save.getPassword());
         return ResponseEntity.ok(true);
     }
 
     public Optional<Member> findByMemberId(String memberId) {
         return memberJpaRepository.findByMemberId(memberId);
-    }
-
-    public Member findByEmail(String email) {
-        return memberJpaRepository.findByMemberId(email).orElse(null);
-    }
-
-    public boolean isValidEmail(String email) {
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
-
-    public boolean isValidPhone(String phone) {
-        Matcher matcher = phonePattern.matcher(phone);
-        return matcher.matches();
     }
 }
