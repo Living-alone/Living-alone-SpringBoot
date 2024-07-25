@@ -15,7 +15,11 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
     List<ChatRoom> findByPostViewerId(Long userId);
 
+    // postAuthorId 가 같거나, postViewerId 가 같은 경우 조회.
     List<ChatRoom> findByPostAuthorIdOrPostViewerId(Long postAuthorId, Long postViewerId);
+
+    // postAuthorId 와 postViewerId 모두 같은 경우 조회.
+    Optional<ChatRoom> findByPostAuthorIdAndPostViewerId(Long postAuthorId, Long postViewerId);
 
     // 'c'는 별칭,  ':'는 파라미터 동적 바인딩 위해 필요.
     @Query("SELECT c FROM ChatRoom c WHERE c.chatRoomId = :chatRoomId AND (c.postAuthorId = :userId OR c.postViewerId = :userId)")
