@@ -1,11 +1,18 @@
 package com.livingalone.springboot.chat.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Message {
 
     @Id
@@ -28,11 +35,5 @@ public class Message {
     private Double longitude;
 
     private String image_url;
-
-    public enum MessageType {
-        TEXT,
-        LOCATION,
-        IMAGE
-    }
 
 }
