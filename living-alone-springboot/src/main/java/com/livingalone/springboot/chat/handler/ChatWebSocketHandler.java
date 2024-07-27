@@ -9,6 +9,7 @@ import com.livingalone.springboot.chat.entity.MessageType;
 import com.livingalone.springboot.chat.repository.ChatRoomRepository;
 import com.livingalone.springboot.chat.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     private final ChatRoomRepository chatRoomRepository;
@@ -59,6 +61,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        log.info("---- socket connected ----");
         sessions.add(session);
         String paramsString = session.getUri().getQuery();
         Map<String, String> params = extractParamsFromUrl(paramsString);
@@ -90,6 +93,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             getChatRoomIdBySession.put(session, chatRoomId);
             return;
         }
+        getChatRoomIdBySession.put(session, chatRoomId);
         List<Message> messages = messageRepository.findByChatRoomIdOrderBySendAtAsc(chatRoomId);
         for(Message message : messages) {
             MessageResponse messageResponse = MessageResponse.builder()
@@ -167,6 +171,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         sessions.remove(session);
         getUserIdBySession.remove(session);
         getChatRoomIdBySession.remove(session);
+
+        log.info("---- socket closed ----");
 
     }
 
