@@ -1,6 +1,7 @@
 package com.livingalone.springboot.chat.handler;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.livingalone.springboot.chat.dto.MessageResponse;
 import com.livingalone.springboot.chat.entity.ChatRoom;
@@ -19,6 +20,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -45,11 +47,15 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     // 여러 스레드가 동일한 Set에 접근하기 때문에 동시성 문제 때문에 synchronizedSet 사용.
     // 현재 연결되어있는 session을 저장하는 set.
-    private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
+//    private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
 
     private final Map<WebSocketSession, Long> getChatRoomIdBySession = new HashMap<>();
 
     private final Map<WebSocketSession, Long> getUserIdBySession = new HashMap<>();
+
+    private final Map<WebSocketSession, Long> getPartnerUserIdBySession = new HashMap<>();
+
+    private final Map<Long, WebSocketSession> getSessionByUserId = new HashMap<>();
 
     /*
      * 상대 유저와의 chatRoom 을 조회해보고, 채팅방이 있는 경우 이전 메세지들을 로드.
@@ -62,14 +68,17 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         log.info("---- socket connected ----");
-        sessions.add(session);
+//        sessions.add(session);
         String paramsString = session.getUri().getQuery();
         Map<String, String> params = extractParamsFromUrl(paramsString);
 
         Long userId = Long.parseLong(params.get("userId"));
         Long partnerUserId = Long.parseLong(params.get("partnerUserId"));
 
+        getSessionByUserId.put(userId, session);
+
         getUserIdBySession.put(session, userId);
+        getPartnerUserIdBySession.put(session, partnerUserId);
 
         // (userA, userB) 와 (userB, userA) -> 같은 채팅방으로.
         Optional<ChatRoom> optionalChatRoomFromUserIdAndPartnerUserId = chatRoomRepository.findByPostAuthorIdAndPostViewerId(userId, partnerUserId);
@@ -95,15 +104,32 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         }
         getChatRoomIdBySession.put(session, chatRoomId);
         List<Message> messages = messageRepository.findByChatRoomIdOrderBySendAtAsc(chatRoomId);
+        // 과거에 나눴던 메세지들 전송.
         for(Message message : messages) {
-            MessageResponse messageResponse = MessageResponse.builder()
+            // 텍스트 메세지인 경우
+            if(message.getMessageType() == MessageType.TEXT) {
+                MessageResponse messageResponse = MessageResponse.builder()
+                        .messageType(MessageType.TEXT)
                         .userId(message.getUserId())
                         .content(message.getContent())
                         .sendAt(message.getSendAt())
                         .build();
 
-            String jsonFormatMessage = objectMapper.writeValueAsString(messageResponse);
-            session.sendMessage(new TextMessage(jsonFormatMessage));
+                String jsonFormatMessage = objectMapper.writeValueAsString(messageResponse);
+                session.sendMessage(new TextMessage(jsonFormatMessage));
+            }
+
+            // 이미지 파일인 경우
+            if(message.getMessageType() == MessageType.IMAGE) {
+
+            }
+
+            // 위치 정보인 경우
+            if(message.getMessageType() == MessageType.LOCATION) {
+
+            }
+
+
         }
 
 
@@ -123,6 +149,40 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      */
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        Long userId = getUserIdBySession.get(session);
+        Long partnerUserId = getPartnerUserIdBySession.get(session);
+        Long chatRoomId = getChatRoomIdBySession.get(session);
+        LocalDateTime currentTime = LocalDateTime.now();
+
+        WebSocketSession partnerUserSession = getSessionByUserId.get(partnerUserId);
+
+        log.info("textMessage = {}", message);
+
+        // 상대 유저 B가 연결되어 있는 경우 메세지 전송.
+        if(partnerUserSession != null) {
+//            partnerUserSession.sendMessage(message);
+            MessageResponse messageResponse = MessageResponse.builder()
+                    .messageType(MessageType.TEXT)
+                    .userId(userId)
+                    .content(message.getPayload())
+                    .sendAt(currentTime)
+                    .build();
+
+            String jsonFormatMessage = objectMapper.writeValueAsString(messageResponse);
+            partnerUserSession.sendMessage(new TextMessage(jsonFormatMessage));
+        }
+
+        // message 테이블에 insert
+        Message messageEntity = Message.builder()
+                .chatRoomId(chatRoomId)
+                .userId(userId)
+                .messageType(MessageType.TEXT)
+                .content(message.getPayload())
+                .sendAt(LocalDateTime.now())
+                .build();
+
+        messageRepository.save(messageEntity);
+
 
 
     }
@@ -133,23 +193,51 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
      */
     @Override
     protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) {
+
         // binaryMessage -> 데이터 추출
         ByteBuffer byteBuffer = message.getPayload();
         byte[] bytes = new byte[byteBuffer.remaining()];
         byteBuffer.get(bytes);
+
+        Long userId = getUserIdBySession.get(session);
+        Long partnerUserId = getPartnerUserIdBySession.get(session);
+
+        WebSocketSession partnerUserSession = getSessionByUserId.get(partnerUserId);
+
+        // 상대 유저 B가 연결되어 있는 경우 메세지 전송.
+        if(partnerUserSession != null) {
+            MessageResponse messageResponse = MessageResponse.builder()
+                    .messageType(MessageType.IMAGE)
+                    .userId(userId)
+                    .sendAt(LocalDateTime.now())
+                    .imageFileData(bytes)
+                    .build();
+
+            // json 으로 파싱 후 전송
+            try {
+                String jsonFormatMessage = objectMapper.writeValueAsString(messageResponse);
+                partnerUserSession.sendMessage(new TextMessage(jsonFormatMessage));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+
+        }
+
 
         /*
          * 파일이름 생성방법
          * 1. UUID.randomUUID()
          * 2. System.currentTimeMillis()
          */
-
         String fileName = UUID.randomUUID().toString() + ".png"; // 임의 확장자. -> 변경 해야함. ( jpg, png ... )
+
+        // S3 버킷에 이미지 저장
         amazonS3.putObject(bucketName, fileName, new ByteArrayInputStream(bytes), null);
 
         String filePath = prefixUrl + fileName;
 
-        // Message Entity 로 맞춰서 포맷 후 저장
+        // db에 Message Entity 로 포맷 후 저장
         Message messageEntity = Message.builder()
                 .chatRoomId(getChatRoomIdBySession.get(session))
                 .userId(getUserIdBySession.get(session))
@@ -160,17 +248,17 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
         messageRepository.save(messageEntity);
 
+
     }
 
-    /*
-     * Set에서 해당 session 제거
-     *
-     */
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        sessions.remove(session);
+//        sessions.remove(session);
+        Long userId = getUserIdBySession.get(session);
         getUserIdBySession.remove(session);
+        getSessionByUserId.remove(userId);
         getChatRoomIdBySession.remove(session);
+        getPartnerUserIdBySession.remove(session);
 
         log.info("---- socket closed ----");
 
