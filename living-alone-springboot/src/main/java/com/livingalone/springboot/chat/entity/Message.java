@@ -34,6 +34,6 @@ public class Message {
 
     private Double longitude;
 
-    private String image_url;
+    private String imageUrl;
 
 }

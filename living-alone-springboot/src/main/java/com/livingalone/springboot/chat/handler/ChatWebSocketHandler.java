@@ -1,7 +1,8 @@
 package com.livingalone.springboot.chat.handler;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.livingalone.springboot.chat.dto.MessageResponse;
 import com.livingalone.springboot.chat.entity.ChatRoom;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -42,13 +44,9 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
 
-    @Value("${cloud.aws.s3.prefixUrl}")
-    private String prefixUrl;
-
     // 여러 스레드가 동일한 Set에 접근하기 때문에 동시성 문제 때문에 synchronizedSet 사용.
     // 현재 연결되어있는 session을 저장하는 set.
-//    private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
-
+    // private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
     private final Map<WebSocketSession, Long> getChatRoomIdBySession = new HashMap<>();
 
     private final Map<WebSocketSession, Long> getUserIdBySession = new HashMap<>();
@@ -119,9 +117,22 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                 session.sendMessage(new TextMessage(jsonFormatMessage));
             }
 
+
+
             // 이미지 파일인 경우
             if(message.getMessageType() == MessageType.IMAGE) {
+                S3Object s3Object = amazonS3.getObject(bucketName, message.getImageUrl());
+                S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
 
+                MessageResponse messageResponse = MessageResponse.builder()
+                        .messageType(MessageType.IMAGE)
+                        .userId(message.getUserId())
+                        .sendAt(message.getSendAt())
+                        .imageFileData(s3ObjectInputStream.readAllBytes())
+                        .build();
+
+                String jsonFormatMessage = objectMapper.writeValueAsString(messageResponse);
+                session.sendMessage(new TextMessage(jsonFormatMessage));
             }
 
             // 위치 정보인 경우
@@ -221,7 +232,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                 throw new RuntimeException(e);
             }
 
-
         }
 
 
@@ -235,15 +245,13 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         // S3 버킷에 이미지 저장
         amazonS3.putObject(bucketName, fileName, new ByteArrayInputStream(bytes), null);
 
-        String filePath = prefixUrl + fileName;
-
         // db에 Message Entity 로 포맷 후 저장
         Message messageEntity = Message.builder()
                 .chatRoomId(getChatRoomIdBySession.get(session))
                 .userId(getUserIdBySession.get(session))
                 .messageType(MessageType.IMAGE)
                 .sendAt(LocalDateTime.now())
-                .image_url(filePath)
+                .imageUrl(fileName)
                 .build();
 
         messageRepository.save(messageEntity);
