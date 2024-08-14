@@ -10,6 +10,7 @@ import com.livingalone.springboot.chat.entity.Message;
 import com.livingalone.springboot.chat.entity.MessageType;
 import com.livingalone.springboot.chat.repository.ChatRoomRepository;
 import com.livingalone.springboot.chat.repository.MessageRepository;
+import com.livingalone.springboot.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,10 +21,12 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import org.springframework.web.socket.server.support.WebSocketHttpRequestHandler;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,6 +43,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper;
 
     private final AmazonS3 amazonS3;
+
+    private final ChatService chatService;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
@@ -66,9 +71,11 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         log.info("---- socket connected ----");
-//        sessions.add(session);
+//        String subProtocol = session.getAcceptedProtocol();
+//        System.out.println("Accepted Protocol: " + subProtocol);
+
         String paramsString = session.getUri().getQuery();
-        Map<String, String> params = extractParamsFromUrl(paramsString);
+        Map<String, String> params = chatService.extractParamsFromUrl(paramsString);
 
         Long userId = Long.parseLong(params.get("userId"));
         Long partnerUserId = Long.parseLong(params.get("partnerUserId"));
@@ -114,7 +121,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                         .build();
 
                 String jsonFormatMessage = objectMapper.writeValueAsString(messageResponse);
-                session.sendMessage(new TextMessage(jsonFormatMessage));
+                System.out.println("jsonFormatMessage = " + jsonFormatMessage);
+//                session.sendMessage(new TextMessage(jsonFormatMessage));
             }
 
 
@@ -132,7 +140,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                         .build();
 
                 String jsonFormatMessage = objectMapper.writeValueAsString(messageResponse);
-                session.sendMessage(new TextMessage(jsonFormatMessage));
+//                session.sendMessage(new TextMessage(jsonFormatMessage));
             }
 
             // 위치 정보인 경우
@@ -262,6 +270,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 //        sessions.remove(session);
+        log.info("close reason : {} ", status.getReason());
+
         Long userId = getUserIdBySession.get(session);
         getUserIdBySession.remove(session);
         getSessionByUserId.remove(userId);
@@ -269,22 +279,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         getPartnerUserIdBySession.remove(session);
 
         log.info("---- socket closed ----");
-
-    }
-
-    /*
-     * url 에서 param 추출하기 위한 메소드.
-     * request url : "ws://~~/chat?userId=1&partnerUserId=2&postId=1"
-     * url.split("&") -> userId=1, partnerUserId=2, postId=1
-     * collect~~ -> stream 을 map 으로 변환.
-     */
-    private Map<String, String> extractParamsFromUrl(String url) {
-        return Arrays.stream(url.split("&"))
-                .map(param -> param.split("="))
-                .collect(Collectors.toMap(
-                        keyValue -> keyValue[0],
-                        keyValue -> keyValue[1]
-                ));
     }
 
 }
